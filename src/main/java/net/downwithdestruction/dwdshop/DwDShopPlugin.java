@@ -8,8 +8,6 @@ import net.downwithdestruction.dwdshop.commands.GeneralCommands;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import net.roguedraco.lang.Lang;
-import net.roguedraco.player.RDEvents;
-import net.roguedraco.player.RDPlayers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -78,18 +76,6 @@ public class DwDShopPlugin extends JavaPlugin {
 				log("Shops folder created.");
 			}
 		}
-
-		// Create players folder
-		theDir = new File(this.getDataFolder() + "/players/"
-				+ File.separatorChar);
-
-		// if the directory does not exist, create it
-		if (!theDir.exists()) {
-			boolean result = theDir.mkdir();
-			if (result) {
-				log("Players folder created.");
-			}
-		}
 		
 		setupCommands();
 		
@@ -97,11 +83,18 @@ public class DwDShopPlugin extends JavaPlugin {
 		Listener events = new Events(this);
 		pm.registerEvents(events, this);
 
-		Listener RDEvents = new RDEvents();
-		pm.registerEvents(RDEvents, this);
-		RDPlayers.loadAll();
-		//Shops.loadShops();
+		Shops.loadShops();
+		
+		
+		log("Plugin enabled. - By TruDan");
 
+	}
+	
+	public void onDisable() {
+		
+		lang.saveLang();
+		Shops.saveShops();
+		log("Plugin disabled. - By TruDan");
 	}
 
 	private void setupCommands() {
