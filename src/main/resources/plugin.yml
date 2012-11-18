@@ -1,0 +1,9 @@
+name: ${project.name}
+main: net.downwithdestruction.dwdshop.DwDShopPlugin
+version: ${project.version}
+depends: [Vault]
+dev-url: ${project.url}
+commands:
+    shoprepair:
+      usage: /shoprepair
+      description: Repair ChestShops into DwDShops

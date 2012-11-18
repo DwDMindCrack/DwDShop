@@ -28,4 +28,10 @@ public class Shops {
 		
 	}
 	
+	public static Shop createShop(Location blockLoc,int itemID, short itemDamage, double buyPrice, double sellPrice) {
+		Shop shop = new Shop(blockLoc,itemID,itemDamage,buyPrice,sellPrice);
+		Shops.shops.put(blockLoc, shop);
+		return shop;
+	}
+	
 }

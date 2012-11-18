@@ -1,0 +1,7 @@
+commands:
+  repairModeEnabled: "&7Shop repair mode is now &aActive&7."
+  repairModeDisabled: "&7Shop repair mode is now &cDisabled&7."
+exceptions:
+  itemNotFound: "&7That item could not be found."
+  notAdminShop: "&7That block is not an admin shop."
+  shopUpdated: "&7That shop has been updated to a DwDShop."

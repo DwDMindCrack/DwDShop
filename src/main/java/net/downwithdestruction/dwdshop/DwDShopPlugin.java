@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lib.PatPeter.SQLibrary.MySQL;
+
 import net.downwithdestruction.dwdshop.commands.GeneralCommands;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -42,6 +44,8 @@ public class DwDShopPlugin extends JavaPlugin {
 
 	public static Permission permission = null;
 	public static Economy economy = null;
+	
+	public static MySQL db = null;
 
 	public void onEnable() {
 
@@ -79,6 +83,10 @@ public class DwDShopPlugin extends JavaPlugin {
 		
 		setupCommands();
 		
+		DwDShopPlugin.db = new MySQL(logger,"["+pluginName+" v"+pluginVersion+"]",getConfig().getString("mysql.hostname"),getConfig().getString("mysql.port"),getConfig().getString("mysql.database"),getConfig().getString("mysql.username"),getConfig().getString("mysql.password"));
+		
+		
+		
 		PluginManager pm = getServer().getPluginManager();
 		Listener events = new Events(this);
 		pm.registerEvents(events, this);
@@ -91,6 +99,7 @@ public class DwDShopPlugin extends JavaPlugin {
 	}
 	
 	public void onDisable() {
+		db.close();
 		
 		lang.saveLang();
 		Shops.saveShops();
