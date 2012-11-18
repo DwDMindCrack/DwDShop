@@ -18,10 +18,12 @@ public class GeneralCommands {
 		if(Events.repairMode.contains(sender.getName())) {
 			Events.repairMode.remove(sender.getName());
 			sender.sendMessage(DwDShopPlugin.lang.get("commands.repairModeDisabled"));
+			DwDShopPlugin.debug(sender.getName()+"'s Repair Mode is now: Disabled");
 		}
 		else {
 			Events.repairMode.add(sender.getName());
 			sender.sendMessage(DwDShopPlugin.lang.get("commands.repairModeEnabled"));
+			DwDShopPlugin.debug(sender.getName()+"'s Repair Mode is now: Enabled");
 		}
 	}
 	
