@@ -20,6 +20,24 @@ public class Shops {
 		return false;
 	}
 	
+	public static boolean isAdminShop(Location loc) {
+		if(isShop(loc)) {
+			Shop shop = getShop(loc);
+			if(shop.getOwner().equalsIgnoreCase("Admin Shop")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static Shop getShop(Location loc) {
+		if(isShop(loc)) {
+			Shop shop = shops.get(loc);
+			return shop;
+		}
+		return null;
+	}
+	
 	public static void loadShops() {
 		
 	}

@@ -85,6 +85,14 @@ public class DwDShopPlugin extends JavaPlugin {
 		
 		DwDShopPlugin.db = new MySQL(logger,"["+pluginName+" v"+pluginVersion+"]",getConfig().getString("mysql.hostname"),getConfig().getString("mysql.port"),getConfig().getString("mysql.database"),getConfig().getString("mysql.username"),getConfig().getString("mysql.password"));
 		
+		try
+        {
+            db.open();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
 		
 		
 		PluginManager pm = getServer().getPluginManager();

@@ -1,0 +1,8 @@
+debug: false
+useFancyConsole: true
+mysql:
+  hostname: localhost
+  username: root
+  password: 
+  port: 3306
+  database: dwdshop

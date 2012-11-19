@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -27,16 +28,21 @@ public class Events implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			DwDShopPlugin.debug("Right click block");
 			Location location = event.getClickedBlock().getLocation();
-			if (location.getBlock().getType() == Material.SIGN
-					|| location.getBlock().getType() == Material.WALL_SIGN
-					|| location.getBlock().getType() == Material.SIGN_POST) {
+			Block block = location.getBlock();
+			if (block.getType() == Material.SIGN
+					|| block.getType() == Material.WALL_SIGN
+					|| block.getType() == Material.SIGN_POST) {
+				DwDShopPlugin.debug("Is Sign");
 				if (repairMode.contains(event.getPlayer().getName())) {
+					DwDShopPlugin.debug("Is in repair mode");
 					// Convert from old format
-					Sign sign = (Sign) event.getClickedBlock();
+					Sign sign = (Sign) block.getState();
 					DwDShopPlugin.debug("Line 0:"+sign.getLine(0));
-					if (sign.getLine(0).contains("admin")
-							&& sign.getLine(0).contains("shop")) {
+					if ((sign.getLine(0).toLowerCase().contains("admin")
+							&& sign.getLine(0).toLowerCase().contains("shop")) || Shops.isAdminShop(location)) {
+						DwDShopPlugin.debug("Line contains admin and shop");
 						String amount = sign.getLine(1);
 
 						int x, y, z;
@@ -52,6 +58,7 @@ public class Events implements Listener {
 									&& (eLoc.getBlockY() > y)
 									&& (eLoc.getBlockY() <= (y + 2))
 									&& (e.getType() == EntityType.ITEM_FRAME)) {
+								DwDShopPlugin.debug("Found item frame");
 								// Found the entity
 
 								ItemFrame frame = (ItemFrame) e;
@@ -67,6 +74,7 @@ public class Events implements Listener {
 											.query("SELECT `buy`,`sell`,`itemName` FROM `Items` WHERE `itemID`='"
 													+ itemID + "' LIMIT 1");
 									if (results.first()) {
+										DwDShopPlugin.debug("Found price");
 										double buy, sell;
 										buy = results.getDouble("buy");
 										sell = results.getDouble("sell");
@@ -79,7 +87,7 @@ public class Events implements Listener {
 										// Change the sign \o/
 										String line1, line2, line3, line4;
 
-										line1 = "Admin Shop";
+										line1 = results.getString("itemName");
 										line2 = amount;
 
 										// Lines 3-4 only go up to 10 chars (to
@@ -119,6 +127,7 @@ public class Events implements Listener {
 										sign.setLine(2, line3);
 										sign.setLine(3, line4);
 										sign.update(true);
+										DwDShopPlugin.debug("Set sign");
 										event.getPlayer()
 												.sendMessage(
 														DwDShopPlugin.lang

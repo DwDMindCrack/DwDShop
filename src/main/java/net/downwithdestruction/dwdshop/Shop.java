@@ -34,6 +34,56 @@ public class Shop {
 		DwDShopPlugin.debug("Created Shop: "+itemID+":"+itemDamage+" x"+amount+"@ B:"+buyPrice+" S:"+sellPrice+" - Admin Shop ("+blockX+","+blockY+","+blockZ+")");
 		
 	}
+
+
+	public String getOwner() {
+		return owner;
+	}
+
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+
+	public int getItemID() {
+		return itemID;
+	}
+
+
+	public void setItemID(int itemID) {
+		this.itemID = itemID;
+	}
+
+
+	public int getItemDamage() {
+		return itemDamage;
+	}
+
+
+	public void setItemDamage(int itemDamage) {
+		this.itemDamage = itemDamage;
+	}
+
+
+	public int getAmount() {
+		return amount;
+	}
+
+
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+
+
+	public double getBuy() {
+		return buy;
+	}
+
+
+	public double getSell() {
+		return sell;
+	}
 	
 	
 	
