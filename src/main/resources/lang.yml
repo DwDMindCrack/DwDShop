@@ -1,10 +1,18 @@
 commands:
   repairModeEnabled: "&7Shop repair mode is now &aActive&7."
   repairModeDisabled: "&7Shop repair mode is now &cDisabled&7."
+  createModeEnabled: "&7Shop create mode is now &aActive&7."
+  createModeDisabled: "&7Shop create mode is now &cDisabled&7."
 exceptions:
   noPermission: "&cYou do not have permission."
   numExpected: "&cExpecting a number"
   errorOccurred: "&cSorry, but an error occurred whilst proceeding with your request."
   itemNotFound: "&7That item could not be found."
   notAdminShop: "&7That block is not an admin shop."
+  notEnoughFunds: "&7You do not have enough funds to buy this item."
+  notEnoughItems: &7You do not have enough items to sell."
+signs:
+  buyComplete: "&7You have bought &b%A %I&7 for &a%P%7."
+  sellComplete: "&7You have sold &b%A %I&7 for &a%P%7."
+  shopCreated: "&7Admin shop has been created."
   shopUpdated: "&7That shop has been updated to a DwDShop."

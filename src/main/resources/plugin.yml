@@ -4,6 +4,6 @@ version: ${project.version}
 depends: [Vault]
 dev-url: ${project.url}
 commands:
-    shoprepair:
-      usage: /shoprepair
-      description: Repair ChestShops into DwDShops
+    ashop:
+      usage: /ashop
+      description: All shop-related commands
