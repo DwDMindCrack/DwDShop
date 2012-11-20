@@ -25,9 +25,18 @@ public class Shops {
 		}
 		return null;
 	}
+	
+	public static void deleteShop(Location loc) {
+		if(isShop(loc)) {
+			Shop shop = getShop(loc);
+			shop.delete();
+			shops.remove(loc);
+			
+		}
+	}
 
 	public static void loadShops() {
-		File[] files = new File("plugins/DwDShop/shops").listFiles();
+		File[] files = new File("plugins/DwDShop/shops/").listFiles();
 		for (File file : files) {
 			String name = file.getName();
 			int pos = name.lastIndexOf('.');

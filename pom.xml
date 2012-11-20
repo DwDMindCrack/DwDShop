@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.downwithdestruction</groupId>
 	<artifactId>DwDShop</artifactId>
-	<version>0.1.0</version>
+	<version>1.0.0</version>
 	<name>DwDShop</name>
 	<description>Sign based shops that run from a database.</description>
 	<properties>

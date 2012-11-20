@@ -19,7 +19,7 @@ public class Shop {
 	private FileConfiguration conf = null;
 
 	public Shop(String name) {
-		this.name = world+"-"+blockX+"-"+blockY+"-"+blockZ;
+		this.name = name;
 	}
 	
 	public Shop(int itemID, Location location) {
@@ -28,7 +28,7 @@ public class Shop {
 		this.blockX = location.getBlockX();
 		this.blockY = location.getBlockY();
 		this.blockZ = location.getBlockZ();
-		this.name = world+"-"+blockX+"-"+blockY+"-"+blockZ;
+		this.name = world+"~=~"+blockX+"~=~"+blockY+"~=~"+blockZ;
 	}
 
 
@@ -46,7 +46,7 @@ public class Shop {
 		this.blockY = blockLoc.getBlockY();
 		this.blockZ = blockLoc.getBlockZ();
 		
-		this.name = world+"-"+blockX+"-"+blockY+"-"+blockZ;
+		this.name = world+"~=~"+blockX+"~=~"+blockY+"~=~"+blockZ;
 		
 		DwDShopPlugin.debug("Created Shop: "+itemID+":"+itemDamage+" x"+amount+"@ B:"+buyPrice+" S:"+sellPrice+" - Admin Shop ("+blockX+","+blockY+","+blockZ+")");
 		
@@ -93,7 +93,7 @@ public class Shop {
 	}
 	
 	public Location getLocation() {
-		return new Location(Bukkit.getServer().getWorld(world),blockX,blockY,blockZ);
+		return Bukkit.getServer().getWorld(world).getBlockAt(blockX, blockY, blockZ).getLocation();
 	}
 	
 	public void save() {
@@ -106,8 +106,11 @@ public class Shop {
 		conf.set("location.z", blockZ);
 		conf.set("item.ID", itemID);
 		conf.set("item.damage", itemDamage);
+		conf.set("item.amount", amount);
 		conf.set("price.buy", buy);
 		conf.set("price.sell", sell);
+		
+		DwDShopPlugin.debug("World: "+world+", X:"+blockX+", Y:"+blockY+", Z:"+blockZ+", itemID:"+itemID+", itemDamage:"+itemDamage+", amount:"+amount+", buy:"+buy+", sell:"+sell);
 
 		try {
 			conf.save(confFile); // Save the file
@@ -129,8 +132,17 @@ public class Shop {
 		
 		this.itemID = conf.getInt("item.ID");
 		this.itemDamage = conf.getInt("item.damage");
+		this.amount = conf.getInt("item.amount");
 		this.buy = conf.getDouble("price.buy");
 		this.sell = conf.getDouble("price.sell");
+		
+		DwDShopPlugin.debug("World: "+world+", X:"+blockX+", Y:"+blockY+", Z:"+blockZ+", itemID:"+itemID+", itemDamage:"+itemDamage+", amount:"+amount+", buy:"+buy+", sell:"+sell);
+		
+	}
+	
+	public void delete() {
+		confFile = new File("plugins/DwDShop/shops/", name + ".yml");
+		confFile.delete();
 	}
 
 	public String getName() {

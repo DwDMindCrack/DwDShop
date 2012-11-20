@@ -13,9 +13,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -156,17 +158,26 @@ public class Events implements Listener {
 								DwDShopPlugin.lang
 										.get("exceptions.notAdminShop"));
 					}
+					event.setUseItemInHand(Event.Result.DENY);
+					event.setUseInteractedBlock(Event.Result.DENY);
 				} else {
 					if (Shops.isShop(location)) {
 						// Sell
 						Player player = event.getPlayer();
 						Shop shop = Shops.getShop(location);
+						
+						DwDShopPlugin.debug("Sell Request "+shop.getAmount()+" of "+shop.getItemID()+":"+shop.getItemDamage()+" for "+shop.getBuy());
 
-						int itemID = shop.getItemID();
+						String itemID = ""+shop.getItemID();
 						// Check inventory
 						if (player.getInventory().contains(
-								Material.getMaterial(itemID), shop.getAmount())) {
+								Material.getMaterial(shop.getItemID()), shop.getAmount())) {
 							double price = shop.getSell() * shop.getAmount();
+							short damage = (short) shop.getItemDamage();
+							
+							if(damage > 0) {
+								itemID = itemID+":"+damage;
+							}
 
 							ResultSet results;
 							try {
@@ -178,7 +189,7 @@ public class Events implements Listener {
 									DwDShopPlugin.economy.depositPlayer(
 											player.getName(), price);
 									ItemStack items = new ItemStack(
-											shop.getItemID(), shop.getAmount());
+											shop.getItemID(), shop.getAmount(), damage);
 									player.getInventory().removeItem(items);
 									player.updateInventory();
 									// Done \o/
@@ -200,6 +211,8 @@ public class Events implements Listener {
 									.get("exceptions.notEnoughItems"));
 						}
 					}
+					event.setUseItemInHand(Event.Result.DENY);
+					event.setUseInteractedBlock(Event.Result.DENY);
 				}
 			}
 		} else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -208,9 +221,16 @@ public class Events implements Listener {
 				// Buy
 				Player player = event.getPlayer();
 				Shop shop = Shops.getShop(location);
+				
+				DwDShopPlugin.debug("Buy Request "+shop.getAmount()+" of "+shop.getItemID()+":"+shop.getItemDamage()+" for "+shop.getBuy());
 
-				int itemID = shop.getItemID();
+				String itemID = ""+shop.getItemID();
+				short damage = (short) shop.getItemDamage();
 				double price = shop.getBuy() * shop.getAmount();
+				
+				if(damage > 0) {
+					itemID = itemID+":"+damage;
+				}
 				
 				// Check inventory
 				if (DwDShopPlugin.economy.has(player.getName(), price)) {
@@ -225,7 +245,7 @@ public class Events implements Listener {
 							DwDShopPlugin.economy.withdrawPlayer(
 									player.getName(), price);
 							ItemStack items = new ItemStack(
-									shop.getItemID(), shop.getAmount());
+									shop.getItemID(), shop.getAmount(), damage);
 							player.getInventory().addItem(items);
 							// Done \o/
 							String itemName = results
@@ -245,6 +265,7 @@ public class Events implements Listener {
 					player.sendMessage(DwDShopPlugin.lang
 							.get("exceptions.notEnoughItems"));
 				}
+				event.setUseItemInHand(Event.Result.DENY);
 			}
 		}
 	}
@@ -373,6 +394,21 @@ public class Events implements Listener {
 						}
 					}
 				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		Location loc = event.getBlock().getLocation();
+		if(Shops.isShop(loc)) {
+			if(event.getPlayer().hasPermission("dwdshop.shop.delete")) {
+				Shops.deleteShop(loc);
+				event.getPlayer().sendMessage(DwDShopPlugin.lang.get("signs.shopDeleted"));
+			}
+			else {
+				event.setCancelled(true);
+				event.getPlayer().sendMessage(DwDShopPlugin.lang.get("exceptions.noPermission"));
 			}
 		}
 	}

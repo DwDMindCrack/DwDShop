@@ -2,6 +2,8 @@ name: ${project.name}
 main: net.downwithdestruction.dwdshop.DwDShopPlugin
 version: ${project.version}
 depends: [Vault]
+soft-depend: [multiworld, Multiverse-Core]
+load: POSTWORLD
 dev-url: ${project.url}
 commands:
     ashop:
