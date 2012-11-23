@@ -34,6 +34,7 @@ public class Events implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		if(event.getPlayer().isSneaking()) return;
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Location location = event.getClickedBlock().getLocation();
 			Block block = location.getBlock();
@@ -73,6 +74,8 @@ public class Events implements Listener {
 
 								// Get Prices
 								try {
+									DwDShopPlugin.debug("Query: SELECT `buy`,`sell`,`itemName` FROM `Items` WHERE `itemID`='"
+													+ itemID + "' LIMIT 1");
 									ResultSet results = DwDShopPlugin.db
 											.query("SELECT `buy`,`sell`,`itemName` FROM `Items` WHERE `itemID`='"
 													+ itemID + "' LIMIT 1");
@@ -83,58 +86,11 @@ public class Events implements Listener {
 										sell = results.getDouble("sell");
 
 										// Add the local storage
-										Shops.createShop(location, item,
+										Shop shop = Shops.createShop(location, item,
 												damage, amount, buy, sell);
-										Shops.saveShops();
+										shop.save();
 
-										// Change the sign \o/
-										String line1, line2, line3, line4;
-
-										line1 = results.getString("itemName");
-										line2 = ""+amount;
-
-										// Lines 3-4 only go up to 10 chars (to
-										// line up) - 7 + . + decimals, always
-										// align to right!!
-										
-										buy = buy * amount;
-										sell = sell * amount;
-										
-										
-										String buy1 = Double.toString(buy);
-										String sell1 = Double.toString(sell);
-
-										String buyPrice = "";
-										String sellPrice = "";
-
-										if (buy1.length() > 10) {
-											buyPrice = "999,999.00";
-										} else {
-											int spaces = 10 - buy1.length();
-											for (x = 0; x < spaces; x++) {
-												buyPrice += " ";
-											}
-											buyPrice += buy1;
-										}
-
-										if (sell1.length() > 10) {
-											sell1 = "999,999.00";
-										} else {
-											int spaces = 10 - sell1.length();
-											for (x = 0; x < spaces; x++) {
-												sellPrice += " ";
-											}
-											sellPrice += sell1;
-										}
-
-										line3 = "Buy " + buyPrice;
-										line4 = "Sell " + sellPrice;
-
-										sign.setLine(0, line1);
-										sign.setLine(1, line2);
-										sign.setLine(2, line3);
-										sign.setLine(3, line4);
-										sign.update(true);
+										shop.update();
 										event.getPlayer()
 												.sendMessage(
 														DwDShopPlugin.lang
@@ -181,6 +137,8 @@ public class Events implements Listener {
 
 							ResultSet results;
 							try {
+								DwDShopPlugin.debug("Query: SELECT `itemName` FROM `Items` WHERE `itemID`='"
+										+ itemID + "' LIMIT 1");
 								results = DwDShopPlugin.db
 										.query("SELECT `itemName` FROM `Items` WHERE `itemID`='"
 												+ itemID + "' LIMIT 1");
@@ -210,9 +168,9 @@ public class Events implements Listener {
 							player.sendMessage(DwDShopPlugin.lang
 									.get("exceptions.notEnoughItems"));
 						}
+						event.setUseItemInHand(Event.Result.DENY);
+						event.setUseInteractedBlock(Event.Result.DENY);
 					}
-					event.setUseItemInHand(Event.Result.DENY);
-					event.setUseInteractedBlock(Event.Result.DENY);
 				}
 			}
 		} else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -237,6 +195,8 @@ public class Events implements Listener {
 
 					ResultSet results;
 					try {
+						DwDShopPlugin.debug("Query: SELECT `itemName` FROM `Items` WHERE `itemID`='"
+								+ itemID + "' LIMIT 1");
 						results = DwDShopPlugin.db
 								.query("SELECT `itemName` FROM `Items` WHERE `itemID`='"
 										+ itemID + "' LIMIT 1");
@@ -266,6 +226,7 @@ public class Events implements Listener {
 							.get("exceptions.notEnoughItems"));
 				}
 				event.setUseItemInHand(Event.Result.DENY);
+				event.setUseInteractedBlock(Event.Result.DENY);
 			}
 		}
 	}
@@ -314,6 +275,8 @@ public class Events implements Listener {
 
 							// Get Prices
 							try {
+								DwDShopPlugin.debug("Query: SELECT `buy`,`sell`,`itemName` FROM `Items` WHERE `itemID`='"
+										+ itemID + "' LIMIT 1");
 								ResultSet results = DwDShopPlugin.db
 										.query("SELECT `buy`,`sell`,`itemName` FROM `Items` WHERE `itemID`='"
 												+ itemID + "' LIMIT 1");
@@ -324,58 +287,17 @@ public class Events implements Listener {
 									sell = results.getDouble("sell");
 
 									// Add the local storage
-									Shops.createShop(location, item, damage, amount, 
+									Shop shop = Shops.createShop(location, item, damage, amount, 
 											buy, sell);
-									Shops.saveShops();
+									shop.save();
 
-									// Change the sign \o/
-									String line1, line2, line3, line4;
-
-									line1 = results.getString("itemName");
-									line2 = "" + amount;
-
-									// Lines 3-4 only go up to 10 chars (to
-									// line up) - 7 + . + decimals, always
-									// align to right!!
+									String[] signText = shop.update();
 									
-									buy = buy * amount;
-									sell = sell * amount;
+									event.setLine(0, signText[0]);
+									event.setLine(1, signText[1]);
+									event.setLine(2, signText[2]);
+									event.setLine(3, signText[3]);
 									
-									String buy1 = Double.toString(buy);
-									String sell1 = Double.toString(sell);
-
-									String buyPrice = "";
-									String sellPrice = "";
-
-									if (buy1.length() > 10) {
-										buyPrice = "999,999.00";
-									} else {
-										int spaces = 10 - buy1.length();
-										for (x = 0; x < spaces; x++) {
-											buyPrice += " ";
-										}
-										buyPrice += buy1;
-									}
-
-									if (sell1.length() > 10) {
-										sell1 = "999,999.00";
-									} else {
-										int spaces = 10 - sell1.length();
-										for (x = 0; x < spaces; x++) {
-											sellPrice += " ";
-										}
-										sellPrice += sell1;
-									}
-
-									line3 = "Buy "
-											+ buyPrice;
-									line4 = "Sell "
-											+ sellPrice;
-
-									event.setLine(0, line1);
-									event.setLine(1, line2);
-									event.setLine(2, line3);
-									event.setLine(3, line4);
 									event.getPlayer().sendMessage(
 											DwDShopPlugin.lang
 													.get("signs.shopCreated"));

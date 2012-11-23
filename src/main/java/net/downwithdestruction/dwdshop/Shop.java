@@ -2,12 +2,19 @@ package net.downwithdestruction.dwdshop;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
 
 public class Shop {
 
@@ -138,6 +145,124 @@ public class Shop {
 		
 		DwDShopPlugin.debug("World: "+world+", X:"+blockX+", Y:"+blockY+", Z:"+blockZ+", itemID:"+itemID+", itemDamage:"+itemDamage+", amount:"+amount+", buy:"+buy+", sell:"+sell);
 		
+	}
+	
+	public String[] update() {
+		
+		Location location = getLocation();
+		Sign sign = (Sign) location.getBlock().getState();
+		int x, y, z;
+		x = location.getBlockX();
+		y = location.getBlockY();
+		z = location.getBlockZ();
+
+		Entity[] entities = location.getChunk().getEntities();
+		for (Entity e : entities) {
+			Location eLoc = e.getLocation();
+			if ((eLoc.getBlockX() == x)
+					&& (eLoc.getBlockZ()) == z
+					&& (eLoc.getBlockY() > y)
+					&& (eLoc.getBlockY() <= (y + 2))
+					&& (e.getType() == EntityType.ITEM_FRAME)) {
+				// Found the entity
+
+				ItemFrame frame = (ItemFrame) e;
+				int item = frame.getItem().getTypeId();
+				short damage = frame.getItem().getDurability();
+
+				String itemID = (damage == 0) ? "" + item
+						: item + ":" + damage;
+
+				// Get Prices
+				try {
+					DwDShopPlugin.debug("Query: SELECT `buy`,`sell`,`itemName` FROM `Items` WHERE `itemID`='"
+									+ itemID + "' LIMIT 1");
+					ResultSet results = DwDShopPlugin.db
+							.query("SELECT `buy`,`sell`,`itemName` FROM `Items` WHERE `itemID`='"
+									+ itemID + "' LIMIT 1");
+					if (results.first()) {
+						DwDShopPlugin.debug("Found price");
+						double buy, sell;
+						buy = results.getDouble("buy");
+						sell = results.getDouble("sell");
+
+						// Add the local storage
+						Shop shop = Shops.createShop(location, item,
+								damage, amount, buy, sell);
+						shop.save();
+
+						// Change the sign \o/
+						String line1, line2, line3, line4;
+
+						line1 = results.getString("itemName");
+						line2 = ""+amount;
+						
+						if(line1.length() > 16) {
+							line1 = line1.substring(0, 16);
+						}
+
+						// Lines 3-4 only go up to 10 chars (to
+						// line up) - 7 + . + decimals, always
+						// align to right!!
+						
+						buy = buy * amount;
+						sell = sell * amount;
+						
+						DecimalFormat df = new DecimalFormat("###,###.00");
+						
+						String buy1 = df.format(buy);
+						String sell1 = df.format(sell);
+
+						String buyPrice = "";
+						String sellPrice = "";
+
+						if (buy1.length() > 10) {
+							buyPrice = "999,999.00";
+						} else {
+							int spaces = 10 - buy1.length();
+							for (x = 0; x < spaces; x++) {
+								buyPrice += " ";
+							}
+							buyPrice += buy1;
+						}
+
+						if (sell1.length() > 10) {
+							sell1 = "999,999.00";
+						} else {
+							int spaces = 10 - sell1.length();
+							for (x = 0; x < spaces; x++) {
+								sellPrice += " ";
+							}
+							sellPrice += sell1;
+						}
+
+						line3 = "Buy " + buyPrice;
+						line4 = "Sell " + sellPrice;
+
+						sign.setLine(0, line1);
+						sign.setLine(1, line2);
+						sign.setLine(2, line3);
+						sign.setLine(3, line4);
+						sign.update(true);
+						String[] str = new String[] {
+							line1,
+							line2,
+							line3,
+							line4
+						};
+						
+						return str;
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+
+				break;
+			}
+		}
+		return new String[] {
+				"-=-=-=-=-","Error Whilst","Parsing Sign","-=-=-=-=-"
+			};
 	}
 	
 	public void delete() {

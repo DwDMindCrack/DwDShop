@@ -57,7 +57,7 @@ public class Shops {
 		Collection<Shop> ashops = shops.values();
 		for (Shop shop : ashops) {
 			shop.save();
-			DwDShopPlugin.log(DwDShopPlugin.lang.get("plugin.saved") + ": "
+			DwDShopPlugin.debug(DwDShopPlugin.lang.get("plugin.saved") + ": "
 					+ shop.getName());
 		}
 	}

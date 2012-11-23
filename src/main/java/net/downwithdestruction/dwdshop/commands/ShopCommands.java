@@ -1,7 +1,11 @@
 package net.downwithdestruction.dwdshop.commands;
 
+import java.util.Collection;
+
 import net.downwithdestruction.dwdshop.DwDShopPlugin;
 import net.downwithdestruction.dwdshop.Events;
+import net.downwithdestruction.dwdshop.Shop;
+import net.downwithdestruction.dwdshop.Shops;
 
 import org.bukkit.command.CommandSender;
 
@@ -39,6 +43,15 @@ public class ShopCommands {
 			Events.createMode.add(sender.getName());
 			sender.sendMessage(DwDShopPlugin.lang.get("commands.createModeEnabled"));
 			DwDShopPlugin.debug(sender.getName()+"'s Create Mode is now: Enabled");
+		}
+	}
+	
+	@Command(aliases = { "updateall", "ua" },usage = "", flags = "", desc = "Create a dwdshop (Admin Shop only).",help = "Creates a dwdshop", min = 0, max = 0)
+	@CommandPermissions("dwdshop.shop.updateall")
+	public static void updateall(CommandContext args, CommandSender sender) throws CommandException {
+		Collection<Shop> shops = Shops.shops.values();
+		for(Shop shop : shops) {
+			shop.update();
 		}
 	}
 	
