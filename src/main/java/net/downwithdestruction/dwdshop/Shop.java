@@ -187,9 +187,15 @@ public class Shop {
 						sell = results.getDouble("sell");
 
 						// Add the local storage
-						Shop shop = Shops.createShop(location, item,
-								damage, amount, buy, sell);
-						shop.save();
+						this.itemDamage = damage;
+						this.buy = buy;
+						this.sell = sell;
+						this.blockX = location.getBlockX();
+						this.blockY = location.getBlockY();
+						this.blockZ = location.getBlockZ();
+						this.world = location.getWorld().getName();
+						this.itemID = item;
+						save();
 
 						// Change the sign \o/
 						String line1, line2, line3, line4;

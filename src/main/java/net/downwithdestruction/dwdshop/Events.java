@@ -88,7 +88,6 @@ public class Events implements Listener {
 										// Add the local storage
 										Shop shop = Shops.createShop(location, item,
 												damage, amount, buy, sell);
-										shop.save();
 
 										shop.update();
 										event.getPlayer()
@@ -297,7 +296,6 @@ public class Events implements Listener {
 									// Add the local storage
 									Shop shop = Shops.createShop(location,
 											item, damage, amount, buy, sell);
-									shop.save();
 
 									String[] signText = shop.update();
 
