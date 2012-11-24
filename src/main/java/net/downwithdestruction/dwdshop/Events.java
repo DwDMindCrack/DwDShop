@@ -193,7 +193,9 @@ public class Events implements Listener {
 				// Check inventory
 				if (DwDShopPlugin.economy.has(player.getName(), price)) {
 
-					ResultSet results;
+					if(player.getInventory().firstEmpty() > 0) {
+						ResultSet results;
+					
 					try {
 						DwDShopPlugin.debug("Query: SELECT `itemName` FROM `Items` WHERE `itemID`='"
 								+ itemID + "' LIMIT 1");
@@ -220,10 +222,15 @@ public class Events implements Listener {
 						player.sendMessage(DwDShopPlugin.lang
 								.get("exceptions.itemNotFound"));
 					}
+					}
+					else {
+						player.sendMessage(DwDShopPlugin.lang
+								.get("exceptions.notEnoughItemSpace"));
+					}
 				} else {
 					// Not enough items
 					player.sendMessage(DwDShopPlugin.lang
-							.get("exceptions.notEnoughItems"));
+							.get("exceptions.notEnoughFunds"));
 				}
 				event.setUseItemInHand(Event.Result.DENY);
 				event.setUseInteractedBlock(Event.Result.DENY);
@@ -275,8 +282,9 @@ public class Events implements Listener {
 
 							// Get Prices
 							try {
-								DwDShopPlugin.debug("Query: SELECT `buy`,`sell`,`itemName` FROM `Items` WHERE `itemID`='"
-										+ itemID + "' LIMIT 1");
+								DwDShopPlugin
+										.debug("Query: SELECT `buy`,`sell`,`itemName` FROM `Items` WHERE `itemID`='"
+												+ itemID + "' LIMIT 1");
 								ResultSet results = DwDShopPlugin.db
 										.query("SELECT `buy`,`sell`,`itemName` FROM `Items` WHERE `itemID`='"
 												+ itemID + "' LIMIT 1");
@@ -287,17 +295,17 @@ public class Events implements Listener {
 									sell = results.getDouble("sell");
 
 									// Add the local storage
-									Shop shop = Shops.createShop(location, item, damage, amount, 
-											buy, sell);
+									Shop shop = Shops.createShop(location,
+											item, damage, amount, buy, sell);
 									shop.save();
 
 									String[] signText = shop.update();
-									
+
 									event.setLine(0, signText[0]);
 									event.setLine(1, signText[1]);
 									event.setLine(2, signText[2]);
 									event.setLine(3, signText[3]);
-									
+
 									event.getPlayer().sendMessage(
 											DwDShopPlugin.lang
 													.get("signs.shopCreated"));
@@ -319,18 +327,19 @@ public class Events implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		Location loc = event.getBlock().getLocation();
-		if(Shops.isShop(loc)) {
-			if(event.getPlayer().hasPermission("dwdshop.shop.delete")) {
+		if (Shops.isShop(loc)) {
+			if (event.getPlayer().hasPermission("dwdshop.shop.delete")) {
 				Shops.deleteShop(loc);
-				event.getPlayer().sendMessage(DwDShopPlugin.lang.get("signs.shopDeleted"));
-			}
-			else {
+				event.getPlayer().sendMessage(
+						DwDShopPlugin.lang.get("signs.shopDeleted"));
+			} else {
 				event.setCancelled(true);
-				event.getPlayer().sendMessage(DwDShopPlugin.lang.get("exceptions.noPermission"));
+				event.getPlayer().sendMessage(
+						DwDShopPlugin.lang.get("exceptions.noPermission"));
 			}
 		}
 	}

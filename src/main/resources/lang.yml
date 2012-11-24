@@ -10,7 +10,8 @@ exceptions:
   itemNotFound: "&7That item could not be found."
   notAdminShop: "&7That block is not an admin shop."
   notEnoughFunds: "&7You do not have enough funds to buy this item."
-  notEnoughItems: &7You do not have enough items to sell."
+  notEnoughItems: "&7You do not have enough items to sell."
+  notEnoughItemSpace: "&7You do not have enough space in your inventory."
 signs:
   buyComplete: "&7You have bought &b%A %I&7 for &a%P%7."
   sellComplete: "&7You have sold &b%A %I&7 for &a%P%7."
