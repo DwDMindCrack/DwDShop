@@ -192,7 +192,7 @@ public class Events implements Listener {
 				// Check inventory
 				if (DwDShopPlugin.economy.has(player.getName(), price)) {
 
-					if(player.getInventory().firstEmpty() > 0) {
+					if(player.getInventory().firstEmpty() >= 0) {
 						ResultSet results;
 					
 					try {
